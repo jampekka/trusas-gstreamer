@@ -9,6 +9,7 @@
   "author": "Jami Pekkanen <jami.pekkanen@gmail.com>",
   "license": "AGPL-3.0",
   "dependencies": {
+    "janus-gateway-js": "^0.8.1",
     "yargs": "^7.1.0"
   }
 }
