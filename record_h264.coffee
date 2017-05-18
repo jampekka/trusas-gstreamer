@@ -10,8 +10,12 @@ record = (opts) ->
 		v4l2src device="#{opts.video}" do-timestamp=true ! video/x-h264,framerate=30/1,width=1280,height=720 ! h264parse ! tee name=src
 		mpegtsmux name=mux ! fdsink fd=1
 		src. ! queue ! mux.
-		src. ! queue ! abstime ! text/x-raw ! capssetter join=false replace=true caps=meta/x-klv,parsed=true ! mux. 
 	"""
+	
+	if opts.audio
+		pipeline += " pulsesrc device=#{opts.audio} do-timestamp=true ! queue ! avenc_aac ! mux. "
+
+	pipeline += " src. ! queue ! abstime ! text/x-raw ! capssetter join=false replace=true caps=meta/x-klv,parsed=true ! mux. "
 	pipeline = pipeline.replace /\n/g, " "
 	console.warn pipeline
 	pp = [process.env.GST_PLUGIN_PATH, Path.join __dirname, 'gstabstime', 'src'].join(':')
@@ -25,6 +29,7 @@ record = (opts) ->
 if module == require.main
 	opts = yargs
 		.option 'video', alias: 'v', describe: 'video device'
+		.option 'audio', alias: 'a', describe: 'audio device'
 		.option 'format',
 			alias: 'f',
 			describe: 'gstreamer caps string'
