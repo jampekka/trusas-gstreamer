@@ -3,6 +3,8 @@
 yargs = require 'yargs'
 subprocess = require 'child_process'
 Path = require 'path'
+Promise = require 'bluebird'
+Psubprocess = Promise.promisifyAll subprocess
 
 record = (opts) ->
 	pipeline = """
@@ -20,6 +22,8 @@ record = (opts) ->
 	console.warn pipeline
 	pp = [process.env.GST_PLUGIN_PATH, Path.join __dirname, 'gstabstime', 'src'].join(':')
 	env = Object.assign process.env, GST_PLUGIN_PATH: pp
+	await Psubprocess.exec("v4l2-ctl -d #{opts.video} -c focus_auto=0")
+	await Psubprocess.exec("v4l2-ctl -d #{opts.video} -c focus_absolute=0")
 	subprocess.spawn pipeline, [],
 		shell: true
 		stdio: ['inherit', 'inherit', 'inherit']
