@@ -24,6 +24,7 @@ record = (opts) ->
 	env = Object.assign process.env, GST_PLUGIN_PATH: pp
 	await Psubprocess.exec("v4l2-ctl -d #{opts.video} -c focus_auto=0")
 	await Psubprocess.exec("v4l2-ctl -d #{opts.video} -c focus_absolute=0")
+	await Psubprocess.exec("v4l2-ctl -d #{opts.video} -c sharpness=255")
 	subprocess.spawn pipeline, [],
 		shell: true
 		stdio: ['inherit', 'inherit', 'inherit']
